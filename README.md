@@ -50,4 +50,4 @@ g++ astar.cpp
 * Efficiency:
     > UCS >= Euclidean >= Manhattan in terms of runtime and the number of expanses. 
 * Heuristic validity:
-    > For the examples that I have choosen heuristics are admissible (the results of the algorithm for all of the modes are the same). 
+    > For the examples that I have choosen heuristics are admissible (the results of the algorithm for all the modes are same). 
