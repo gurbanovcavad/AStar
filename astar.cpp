@@ -10,7 +10,7 @@ const char nl = '\n';
 // holds neighbors of a node with corresponding costs (g[u] -> {v, w} -> means u -> v with a w cost)
 vector<array<int, 2>> graph[N];
 // coordinates
-int x[N], y[N], source, destination;
+int x[N], y[N], source, destination, n;
 // holds current cost (the cost to reach that node -> f(n)) and a node, and I used a comparator so that the node with the smallest cost stands on the top of the queue 
 priority_queue<array<int, 2>, vector<array<int, 2>>, greater<array<int, 2>>> q; 
 // to find the path we keep track of nodes' parents 
@@ -30,6 +30,8 @@ int euclidean(int node) {
 vector<int> astar(int mode) {
     // to prevent infinite run 
     bool vis[N];
+    for(int i = 1; i <= n; i++) vis[i] = 0;
+    vis[source] = 1;
     vector<int> path;
     // clear the priority queue 
     while(!q.empty()) q.pop();
@@ -59,10 +61,11 @@ vector<int> astar(int mode) {
             int to = t[0], w = t[1];
             if(vis[to]) continue;
             par[to] = cur_node;
-            if(mode == 1) f += manhattan(to);
-            else if(mode == 2) f += euclidean(to);
+            f = 0;
+            if(mode == 1) f = manhattan(to);
+            else if(mode == 2) f = euclidean(to);
             dis[to] = dis[cur_node] + w;
-            f = dis[to];
+            f += dis[to];
             q.push({f, to});
             pushes++;
         }
@@ -75,15 +78,13 @@ signed main() {
     
     // get the input
     // n is the number of nodes
-    int n = 0;
+    n = 0;
     string l;
     cin >> l;
     while(1) {
         // node's id, a = x_coordinate, b = y_coordinate
         int comma = 0, id, a, b;
-        for(int i = 0, sz = l.size(); i < sz; i++) {
-            if(l[i] == ',') comma++;
-        }
+        for(int i = 0, sz = l.size(); i < sz; i++) if(l[i] == ',') comma++;
         if(comma == 2 || l[0] == 'S') break;
         int cur = 0;
         for(int i = 0, sz = l.size(); i < sz; i++) {
@@ -127,11 +128,14 @@ signed main() {
         destination *= 10;
         destination += (l[i] - '0');
     }
-    // 0 -> ucs mode, 1 -> Euclidean, 2 -> Manhattan 
+    // 0 -> ucs mode, 1 -> Manhattan, 2 -> Euclidean 
     for(int mode = 0; mode < 3; mode++) {
         auto start_time = std::chrono::high_resolution_clock::now();
+        expanded = 0, pushes = 1, max_frontier = 0;
         // fill parent array (par[i] = -1 means we haven't expanded i node)
         for(int i = 1; i <= n; i++) par[i] = -1;
+        for(int i = 1; i <= n; i++) dis[i] = -1;
+        dis[source] = 0;
         vector<int> path;
         if(source == destination) {
             path = {source};
@@ -140,14 +144,15 @@ signed main() {
             path = astar(mode);
         }
         // output
-        cout << "MODE: " << (mode == 0 ? "UCS" : mode == 1 ? " A* Manhattan" : "A* Euclidean") << nl;
+        cout << "MODE: " << (mode == 0 ? "UCS" : mode == 1 ? "A* Manhattan" : "A* Euclidean") << nl;
         cout << "Optimal cost: "; 
         if(path.empty()) cout << "NO PATH\n";
         else cout << dis[destination] << nl;
         if(!path.empty()) {
             cout << "Path: ";
             for(int i = 0, sz = path.size(); i < sz; i++) {
-                cout << path[i] << ' ';
+                cout << path[i];
+                if(i != sz - 1) cout << " -> ";
             }
             cout << nl;
         } 
