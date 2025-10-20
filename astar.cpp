@@ -10,7 +10,7 @@ const char nl = '\n';
 // holds neighbors of a node with corresponding costs (g[u] -> {v, w} -> means u -> v with a w cost)
 vector<array<int, 2>> graph[N];
 // coordinates
-int x[N], y[N], source, destination, n, m;
+int x[N], y[N], source, destination;
 // holds current cost (the cost to reach that node -> f(n)) and a node, and I used a comparator so that the node with the smallest cost stands on the top of the queue 
 priority_queue<array<int, 2>, vector<array<int, 2>>, greater<array<int, 2>>> q; 
 // to find the path we keep track of nodes' parents 
